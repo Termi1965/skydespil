@@ -42,7 +42,6 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     Fjende.setPosition(Math.randomRange(10, 140), 9)
     Fjende.setVelocity(VX, VY)
     Fjende.ay = Acc
-    Fjende.setFlag(SpriteFlag.BounceOnWall, true)
 })
 // Udføres når man trykker på knappen A
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -74,7 +73,6 @@ let Acc = 0
 let VY = 0
 let VX = 0
 let Kanon: Sprite = null
-// Her har jeg tegnet Baggrunds billedet
 scene.setBackgroundImage(img`
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
@@ -197,8 +195,6 @@ f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 `)
-// Her har jeg tegnet Kanonen, og fortalt at det er
-// spilleren.
 Kanon = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -217,18 +213,11 @@ Kanon = sprites.create(img`
 . . . . c c . c . c c . . . . . 
 . . . . c . . c . . c . . . . . 
 `, SpriteKind.Player)
-// Hvor skal kanonen være fra start. (i midten,
-// nederst)
-//
-// Skærmen er 160 x 120 pixels
 Kanon.setPosition(80, 109)
-// Her fortælles at kanonen skal flyttes ved hjælp af
-// højre/venstre knapperne
 controller.moveSprite(Kanon, 80, 0)
 VX = 0
 VY = 10
 Acc = 3
-// Her tegner jeg Fjenden
 Fjende = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . 2 2 2 2 . . . 
@@ -247,9 +236,6 @@ Fjende = sprites.create(img`
 . 2 . . . 2 . 2 . . 2 . . . 2 . 
 . 2 . . . 2 . 2 2 . 2 . . . 2 . 
 `, SpriteKind.Enemy)
-// Fjenden placeres øverst på skærmen et tilfældigt
-// sted
-//
 // Laver et tilfældigt tal ml. 10 og 140
 Fjende.setPosition(Math.randomRange(10, 140), 9)
 // Her angives hvor hurtigt fjenden skal bevæge sig.
