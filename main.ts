@@ -42,6 +42,38 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     Fjende.setPosition(Math.randomRange(10, 140), 9)
     Fjende.setVelocity(VX, VY)
     Fjende.ay = Acc
+    // hvis scoren divideret med 5 giver en rest på 0. Så
+    // bliver det hver 5. gang.
+    //
+    // (5 tabellen)
+    //
+    //
+    // Hvis vi ændrer til 7, så bliver det hver 7. gang
+    if (info.score() > 5 && game.runtime() % 5 == 0) {
+        // Jeg laver en ny fjende
+        Bonus_Fjende = sprites.create(img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . 2 2 2 2 . . . 
+. . . . 2 2 2 2 2 8 8 8 2 . . . 
+. . . 2 8 8 8 8 8 8 8 8 2 . . . 
+. . 2 2 8 8 8 8 8 8 8 8 2 2 . . 
+. . 2 8 8 2 8 8 8 8 2 8 8 2 . . 
+. . 2 8 8 8 8 8 8 8 8 8 8 2 . . 
+. . 2 8 8 8 8 2 8 8 8 8 2 2 . . 
+. . 2 2 8 8 8 8 8 8 8 8 2 . . . 
+. . . 2 8 8 8 8 8 8 8 2 2 . . . 
+. . . 2 2 8 8 8 8 8 8 2 2 . . . 
+. . 2 2 8 8 8 8 8 8 8 8 2 2 . . 
+. 2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 
+. 2 . . . 2 . 2 . . 2 . . . 2 . 
+. 2 . . . 2 . 2 . . 2 . . . 2 . 
+. 2 . . . 2 . 2 2 . 2 . . . 2 . 
+`, SpriteKind.Enemy)
+        // Et tilfældigt sted i toppen af skærmen
+        Bonus_Fjende.setPosition(160, Math.randomRange(10, 90))
+        Bonus_Fjende.setVelocity(-34, 0)
+        Bonus_Fjende.ax = 10
+    }
 })
 // Udføres når man trykker på knappen A
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -68,11 +100,13 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 `, Kanon, 0, -100)
 })
 let projectile: Sprite = null
+let Bonus_Fjende: Sprite = null
 let Fjende: Sprite = null
 let Acc = 0
 let VY = 0
 let VX = 0
 let Kanon: Sprite = null
+// Her har jeg tegnet baggrunds billedet
 scene.setBackgroundImage(img`
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
@@ -195,6 +229,9 @@ f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f 
 `)
+// Her har jeg tegnet kanonen
+//
+// og valgt at det er spilleren
 Kanon = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -213,11 +250,17 @@ Kanon = sprites.create(img`
 . . . . c c . c . c c . . . . . 
 . . . . c . . c . . c . . . . . 
 `, SpriteKind.Player)
+// Kanonen placeres nederst i midten af skærmen.
+//
+//
+// Skærmen er 160 x 120 pixels
 Kanon.setPosition(80, 109)
+// Kanonen skal flyttes med højre/venstre knapperne
 controller.moveSprite(Kanon, 80, 0)
 VX = 0
 VY = 10
 Acc = 3
+// Her tegner jeg fjenden
 Fjende = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . 2 2 2 2 . . . 
@@ -236,6 +279,9 @@ Fjende = sprites.create(img`
 . 2 . . . 2 . 2 . . 2 . . . 2 . 
 . 2 . . . 2 . 2 2 . 2 . . . 2 . 
 `, SpriteKind.Enemy)
+// Fjenden placeres øverst på skærmen, et tilfældigt
+// sted
+//
 // Laver et tilfældigt tal ml. 10 og 140
 Fjende.setPosition(Math.randomRange(10, 140), 9)
 // Her angives hvor hurtigt fjenden skal bevæge sig.
