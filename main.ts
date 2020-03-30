@@ -1,13 +1,36 @@
+sprites.onOverlap(SpriteKind.Food, SpriteKind.Player, function (sprite, otherSprite) {
+    Mønt.destroy(effects.spray, 500)
+    info.changeScoreBy(5)
+})
 // Alt dette udføres hvis projektilet rammer fjenden
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    Mønt = sprites.create(img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . 5 5 5 5 5 . . 
+. . . . . . . . 5 5 c c c 5 5 . 
+. . . . . . . . 5 5 c 5 5 5 5 . 
+. . . . . . . . 5 5 c c c 5 5 . 
+. . . . . . . . 5 5 5 5 c 5 5 . 
+. . . . . . . . 5 5 c c c 5 5 . 
+. . . . . . . . . 5 5 5 5 5 . . 
+`, SpriteKind.Food)
+    Mønt.setPosition(Fjende.x, Fjende.y)
+    Mønt.setVelocity(0, 30)
     // Fjenden skal ødelægge sig selv med ILD effect
-    Fjende.destroy(effects.fire, 10)
+    Fjende.destroy(effects.ashes, 10)
+    // Granaten skal ødelægge sig selv
+    projectile.destroy()
     // Når vi har ramt en fjende får vi et point
     info.changeScoreBy(1)
-    // Hver 5. gang vi rammer en fjende, skal fjenderne
-    // falde lidt hurtigere. Dette markeres ved at
-    // kameraet ryster
-    //
+    Create_Fjende(Fjende)
     // hvis scoren divideret med 5 giver en rest på 0. Så
     // bliver det hver 5. gang.
     //
@@ -15,11 +38,13 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     //
     //
     // Hvis vi ændrer til 7, så bliver det hver 7. gang
-    if (info.score() % 5 == 0) {
+    while (VY < 19 && info.score() % 5 == 0) {
         VY += 1
         scene.cameraShake(4, 500)
     }
-    // Jeg laver en ny fjende
+})
+function Create_Fjende (mySprite: Sprite) {
+    // Her tegner jeg fjenden
     Fjende = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . 2 2 2 2 . . . 
@@ -38,43 +63,29 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
 . 2 . . . 2 . 2 . . 2 . . . 2 . 
 . 2 . . . 2 . 2 2 . 2 . . . 2 . 
 `, SpriteKind.Enemy)
-    // Et tilfældigt sted i toppen af skærmen
+    // Fjenden placeres øverst på skærmen, et tilfældigt
+    // sted
+    //
+    // Laver et tilfældigt tal ml. 10 og 140
     Fjende.setPosition(Math.randomRange(10, 140), 9)
+    // Her angives hvor hurtigt fjenden skal bevæge sig.
+    //
+    // vx er hastighed sidelæns,
+    //
+    // vy er hastigheden op/ned
+    //
+    // vx=0 - ingen bevægelse sidelæns
+    //
+    //
+    // vy=10 - fjenden falder 10 pixels i sekundet
+    //
+    //
+    // Acc=3 - Fjenden falder hurtigere og hurtigere
     Fjende.setVelocity(VX, VY)
+    // Angiver om fjenden skal falde hurtigere og
+    // hurtigere
     Fjende.ay = Acc
-    // hvis scoren divideret med 5 giver en rest på 0. Så
-    // bliver det hver 5. gang.
-    //
-    // (5 tabellen)
-    //
-    //
-    // Hvis vi ændrer til 7, så bliver det hver 7. gang
-    if (info.score() > 5 && game.runtime() % 5 == 0) {
-        // Jeg laver en ny fjende
-        Bonus_Fjende = sprites.create(img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . 2 2 2 2 . . . 
-. . . . 2 2 2 2 2 8 8 8 2 . . . 
-. . . 2 8 8 8 8 8 8 8 8 2 . . . 
-. . 2 2 8 8 8 8 8 8 8 8 2 2 . . 
-. . 2 8 8 2 8 8 8 8 2 8 8 2 . . 
-. . 2 8 8 8 8 8 8 8 8 8 8 2 . . 
-. . 2 8 8 8 8 2 8 8 8 8 2 2 . . 
-. . 2 2 8 8 8 8 8 8 8 8 2 . . . 
-. . . 2 8 8 8 8 8 8 8 2 2 . . . 
-. . . 2 2 8 8 8 8 8 8 2 2 . . . 
-. . 2 2 8 8 8 8 8 8 8 8 2 2 . . 
-. 2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 
-. 2 . . . 2 . 2 . . 2 . . . 2 . 
-. 2 . . . 2 . 2 . . 2 . . . 2 . 
-. 2 . . . 2 . 2 2 . 2 . . . 2 . 
-`, SpriteKind.Enemy)
-        // Et tilfældigt sted i toppen af skærmen
-        Bonus_Fjende.setPosition(160, Math.randomRange(10, 90))
-        Bonus_Fjende.setVelocity(-34, 0)
-        Bonus_Fjende.ax = 10
-    }
-})
+}
 // Udføres når man trykker på knappen A
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     // Her har jeg tegnet granaten, og bestemt at den skal
@@ -100,7 +111,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 `, Kanon, 0, -100)
 })
 let projectile: Sprite = null
-let Bonus_Fjende: Sprite = null
+let Mønt: Sprite = null
 let Fjende: Sprite = null
 let Acc = 0
 let VY = 0
@@ -260,51 +271,10 @@ controller.moveSprite(Kanon, 80, 0)
 VX = 0
 VY = 10
 Acc = 3
-// Her tegner jeg fjenden
-Fjende = sprites.create(img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . 2 2 2 2 . . . 
-. . . . 2 2 2 2 2 . . . 2 . . . 
-. . . 2 . . . . . . . . 2 . . . 
-. . 2 2 . . . . . . . . 2 2 . . 
-. . 2 . . 2 . . . . 2 . . 2 . . 
-. . 2 . . . . . . . . . . 2 . . 
-. . 2 . . . . 2 . . . . 2 2 . . 
-. . 2 2 . . . . . . . . 2 . . . 
-. . . 2 . . . . . . . 2 2 . . . 
-. . . 2 2 . . . . . . 2 2 . . . 
-. . 2 2 . . . . . . . . 2 2 . . 
-. 2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 
-. 2 . . . 2 . 2 . . 2 . . . 2 . 
-. 2 . . . 2 . 2 . . 2 . . . 2 . 
-. 2 . . . 2 . 2 2 . 2 . . . 2 . 
-`, SpriteKind.Enemy)
-// Fjenden placeres øverst på skærmen, et tilfældigt
-// sted
-//
-// Laver et tilfældigt tal ml. 10 og 140
-Fjende.setPosition(Math.randomRange(10, 140), 9)
-// Her angives hvor hurtigt fjenden skal bevæge sig.
-//
-// vx er hastighed sidelæns,
-//
-// vy er hastigheden op/ned
-//
-// vx=0 - ingen bevægelse sidelæns
-//
-//
-// vy=10 - fjenden falder 10 pixels i sekundet
-//
-//
-// Acc=3 - Fjenden falder hurtigere og hurtigere
-Fjende.setVelocity(VX, VY)
-// Angiver om fjenden skal falde hurtigere og
-// hurtigere
-Fjende.ay = Acc
+Create_Fjende(Fjende)
 // Fra starten har man 0 point
 info.setScore(0)
-// Denne blok tjekker hele tiden om vi er døde
-forever(function () {
+game.onUpdate(function () {
     // Hvis en fjende er nået hele vejen ned til bunden af
     // skærmen, er der Game Over, med smelte effect
     if (Fjende.y > 105) {
