@@ -245,7 +245,7 @@ Kanon.setPosition(80, 111)
 // Kanonen skal flyttes med højre/venstre knapperne
 controller.moveSprite(Kanon, 80, 0)
 VX = 0
-VY = 10
+VY = 30
 Acc = 0
 Create_Fjende(Fjende)
 // Fra starten har man 0 point
